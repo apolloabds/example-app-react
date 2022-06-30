@@ -1,5 +1,4 @@
-import './App.css';
-
+import { useEffect, useState } from 'react';
 import {
   AbdsBadge,
   AbdsButton,
@@ -9,9 +8,8 @@ import {
   AbdsSwitch,
   AbdsTooltip,
 } from '@abds/react-bindings';
-
+import './App.css';
 import logo from './logo.svg';
-import { useEffect, useState } from 'react';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -29,7 +27,7 @@ const App = () => {
     if (!tacoTuesday.open) tacoTuesday.open = true;
   }, []);
 
-  function addItem() {
+  const addItem = () => {
     const item = document.createElement('li');
     const shoppingList = document.querySelector('.shoppingList');
 
@@ -40,9 +38,9 @@ const App = () => {
 
     shoppingList.appendChild(item);
     setItemCount(itemCount + 1);
-  }
+  };
 
-  function resetItems() {
+  const subtractItems = () => {
     let checkboxes = document.querySelectorAll('.shoppingList abds-checkbox[checked]');
 
     if (checkboxes.length) {
@@ -54,27 +52,42 @@ const App = () => {
         liElement.remove();
       }
     }
-  }
+  };
 
-  function toggleModal() {
+  const toggleModal = () => {
     const currentState = document.querySelector('#modal-1')?.open;
 
     document.querySelector('#modal-1')?.setAttribute('open', !currentState);
-  }
+  };
 
   return (
     <>
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10">
         <img src={logo} className="h-80 logo opacity-25 pointer-events-none" alt="logo" />
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <section>
+
+      <div className="bg-blue-500 flex items-center justify-center py-4 text-center text-white" role="banner">
+        <abds-icon icon="task-list-pen" size="5xl"></abds-icon>
+        <h1>Welcome to our React example app!</h1>
+      </div>
+
+      <div
+        className={
+          darkMode
+            ? 'bg-black flex flex-col items-center justify-center text-white'
+            : 'flex flex-col items-center justify-center'
+        }
+        id="main-content"
+      >
+        <section id="shopping-list">
           <h2>
             Shopping list <AbdsBadge palette="warning"> Item count: {itemCount}</AbdsBadge>
           </h2>
+
           <ul className="shoppingList"></ul>
+
           <div className="flex gap-x-2 items-center justify-center mt-2">
-            <AbdsButton icon-start="list-bullets" onClick={resetItems} palette="brand">
+            <AbdsButton icon-start="subtract" onClick={subtractItems} palette="brand">
               Remove Completed
             </AbdsButton>
             <AbdsButton icon-start="add" onClick={addItem} palette="brand">
@@ -82,79 +95,108 @@ const App = () => {
             </AbdsButton>
           </div>
         </section>
-        <section>
-          <form className="text-left">
-            <h2 className="text-center">
+
+        <section id="diet-form">
+          <form className="flex flex-col gap-y-2 text-left">
+            <h2 className="flex gap-x-4">
               Favorite Food Form
               <img
-                alt=""
+                alt="taco"
                 className="inline"
                 id="customIcon"
                 src="https://img.icons8.com/office/30/000000/kawaii-taco.png"
               />
-              <AbdsTooltip id="taco-tuesday" for="customIcon" placement="right">
-                It's TACO TUUUUESDAY!!!
+              <AbdsTooltip for="customIcon" id="taco-tuesday" placement="right">
+                It&rsquo;s TACO TUUUUESDAY!!!
               </AbdsTooltip>
             </h2>
 
-            <h3>Favorite Fruit</h3>
-            <AbdsRadio name="fruit" value="apple">
-              Apple
-            </AbdsRadio>
-            <AbdsRadio name="fruit" value="banana">
-              Banana
-            </AbdsRadio>
-            <AbdsRadio name="fruit" value="cherry">
-              Cherry
-            </AbdsRadio>
+            <section className="flex gap-x-4 items-center" id="favorite-fruit">
+              <h3 className="block">Favorite Fruit:</h3>
 
-            <h3>Favorite Vegetable</h3>
-            <AbdsCheckbox name="veggie" value="carrot">
-              Carrot
-            </AbdsCheckbox>
-            <AbdsCheckbox name="veggie" value="broccoli">
-              Broccoli
-            </AbdsCheckbox>
-            <AbdsCheckbox name="veggie" value="potato" tooltip="potatoe">
-              Potato
-            </AbdsCheckbox>
+              <AbdsRadio name="fruit" value="apple">
+                Apple
+                <i id="apple" className="fas fa-apple-whole"></i>
+                <AbdsTooltip for="apple">Pick me! Pick ME!!</AbdsTooltip>
+              </AbdsRadio>
+              <AbdsRadio name="fruit" value="banana">
+                Banana
+              </AbdsRadio>
+              <AbdsRadio name="fruit" value="cherry">
+                Cherry
+              </AbdsRadio>
+              <AbdsRadio name="fruit" value="lemon">
+                Lemon
+                <i className="fas fa-lemon" id="lemon"></i>
+                <AbdsTooltip for="lemon">ez pz lemon squeezy</AbdsTooltip>
+              </AbdsRadio>
+            </section>
 
-            <h3>Dietary Restrictions</h3>
-            <AbdsSwitch name="diet" value="vegan" tooltip="no meat">
-              Vegan
-            </AbdsSwitch>
-            <AbdsSwitch name="diet" value="glutenfree">
-              Gluten Free
-            </AbdsSwitch>
-            <AbdsSwitch name="diet" value="dairyfree">
-              Dairy Free
-            </AbdsSwitch>
+            <section className="flex gap-x-4 items-center" id="favorite-vegetable">
+              <h3>Favorite Vegetable:</h3>
+
+              <AbdsCheckbox name="veggie" value="carrot">
+                Carrot
+                <i id="carrot" className="fas fa-carrot"></i>
+                <abds-tooltip for="carrot">Ehhhh, what&rsquo;s up Doc?</abds-tooltip>
+              </AbdsCheckbox>
+              <AbdsCheckbox name="veggie" value="broccoli">
+                Broccoli
+              </AbdsCheckbox>
+              <AbdsCheckbox name="veggie" value="potato" required tooltip="potatoe">
+                Potato
+              </AbdsCheckbox>
+            </section>
+
+            <section className="flex gap-x-4 items-center" id="dietary-restrictions">
+              <h3>Dietary Restrictions:</h3>
+
+              <AbdsSwitch name="diet" value="vegan" tooltip="no meat">
+                Vegan
+              </AbdsSwitch>
+              <AbdsSwitch name="diet" value="carnivore">
+                Carnivore
+                <i id="dragon" className="fas fa-dragon"></i>
+                <abds-tooltip for="dragon">ROOAARR!!!</abds-tooltip>
+              </AbdsSwitch>
+              <AbdsSwitch name="diet" value="glutenfree">
+                Gluten Free
+              </AbdsSwitch>
+              <AbdsSwitch name="diet" value="dairyfree">
+                Dairy Free
+              </AbdsSwitch>
+            </section>
 
             <AbdsButton className="block" type="submit">
               Submit
             </AbdsButton>
           </form>
         </section>
-        <section>
-          <h2>Toggle Playground</h2>
 
-          <span className={darkMode ? 'text-white bg-black' : ''}>
-            This sentence will change text and background color.
-          </span>
+        <section className="flex gap-x-4" id="toggle-playground">
           <AbdsSwitch
+            id="toggle-theme"
             onClick={() => {
               setDarkMode(!darkMode);
             }}
           >
-            Toggle style
+            Toggle theme
           </AbdsSwitch>
         </section>
+
         <section id="modal">
-          <AbdsButton class="fixed bottom-1 right-1" onClick={toggleModal} appearance="outline" palette="destructive">
+          <AbdsButton
+            appearance="outline"
+            className="fixed bottom-1 right-1"
+            onClick={toggleModal}
+            palette="destructive"
+          >
             Important information
           </AbdsButton>
+
           <AbdsModal header-text="Not important information" icon="information-circle" id="modal-1" palette="danger">
-            <p slot="modal-header">Modal header which shouldn't show</p>
+            <p slot="modal-header">Modal header which shouldn&rsquo;t show</p>
+
             <div slot="modal-body">
               <ul>
                 <li>This is a sentence.</li>
@@ -180,14 +222,14 @@ const App = () => {
               nostrum et, explicabo cumque libero laborum a sequi accusamus reprehenderit quisquam possimus, amet unde
               aspernatur, temporibus vel.
             </div>
+
             <div slot="modal-footer">
-              <AbdsButton class="mr-1" appearance="outline" palette="neutral">
+              <AbdsButton className="mr-1" appearance="outline" palette="neutral">
                 This button will not close modal
               </AbdsButton>
-              <AbdsButton>
-                This one either
-              </AbdsButton>
+              <AbdsButton>This one either</AbdsButton>
             </div>
+
             <p>no slot specified</p>
           </AbdsModal>
         </section>
