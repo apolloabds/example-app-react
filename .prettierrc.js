@@ -1,7 +1,7 @@
 module.exports = {
-  arrowParens: "always",
+  arrowParens: 'always',
   bracketSpacing: true,
-  htmlWhitespaceSensitivity: "ignore",
+  htmlWhitespaceSensitivity: 'ignore',
   printWidth: 120,
   semi: true,
   singleQuote: true,

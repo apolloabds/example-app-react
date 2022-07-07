@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AbdsBadge,
   AbdsButton,
@@ -15,33 +15,46 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [itemCount, setItemCount] = useState(0);
 
+  const modalRef = useRef(null);
+  const shoppingListRef = useRef(null);
+  const tacoTooltipRef = useRef(null);
+
+  const initializeTacoTuesday = () => {
+    if (!tacoTooltipRef.current.open) tacoTooltipRef.current.open = true;
+  };
+
+  const toggleTheme = () => {
+    const body = document.querySelector('body');
+
+    ['bg-black', 'text-white'].forEach((className) => {
+      body.classList[darkMode ? 'add' : 'remove'](className);
+    });
+  };
+
   /**
    * If a boolean attribute is set in the markup and that markup
    * then updates on rerender, the attribute will be true on each
    * rerender. One way to workaround this is to use useEffect to
    * set the attribute only one time on the initial render.
    */
-  useEffect(() => {
-    const tacoTuesday = document.querySelector('#taco-tuesday');
+  useEffect(initializeTacoTuesday, []);
 
-    if (!tacoTuesday.open) tacoTuesday.open = true;
-  }, []);
+  useEffect(toggleTheme, [darkMode]);
 
   const addItem = () => {
     const item = document.createElement('li');
-    const shoppingList = document.querySelector('.shoppingList');
 
     item.innerHTML = `
           <abds-checkbox></abds-checkbox>
           <input placeholder="enter text here"/>
         `;
 
-    shoppingList.appendChild(item);
+    shoppingListRef.current.appendChild(item);
     setItemCount(itemCount + 1);
   };
 
   const subtractItems = () => {
-    let checkboxes = document.querySelectorAll('.shoppingList abds-checkbox[checked]');
+    let checkboxes = shoppingListRef.current.querySelectorAll('abds-checkbox[checked]');
 
     if (checkboxes.length) {
       setItemCount(itemCount - checkboxes.length);
@@ -55,15 +68,13 @@ const App = () => {
   };
 
   const toggleModal = () => {
-    const currentState = document.querySelector('#modal-1')?.open;
-
-    document.querySelector('#modal-1')?.setAttribute('open', !currentState);
+    modalRef.current?.setAttribute('open', !modalRef.current?.open);
   };
 
   return (
     <>
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10">
-        <img src={logo} className="h-80 logo opacity-25 pointer-events-none" alt="logo" />
+        <img alt="logo" className="h-80 logo opacity-25 pointer-events-none" src={logo} />
       </div>
 
       <div className="bg-blue-500 flex items-center justify-center py-4 text-center text-white" role="banner">
@@ -71,20 +82,13 @@ const App = () => {
         <h1>Welcome to our React example app!</h1>
       </div>
 
-      <div
-        className={
-          darkMode
-            ? 'bg-black flex flex-col items-center justify-center text-white'
-            : 'flex flex-col items-center justify-center'
-        }
-        id="main-content"
-      >
+      <div className="flex flex-col items-center justify-center" id="main-content">
         <section id="shopping-list">
           <h2>
             Shopping list <AbdsBadge palette="warning"> Item count: {itemCount}</AbdsBadge>
           </h2>
 
-          <ul className="shoppingList"></ul>
+          <ul ref={shoppingListRef}></ul>
 
           <div className="flex gap-x-2 items-center justify-center mt-2">
             <AbdsButton icon-start="subtract" onClick={subtractItems} palette="brand">
@@ -106,7 +110,7 @@ const App = () => {
                 id="customIcon"
                 src="https://img.icons8.com/office/30/000000/kawaii-taco.png"
               />
-              <AbdsTooltip for="customIcon" id="taco-tuesday" placement="right">
+              <AbdsTooltip for="customIcon" placement="right" ref={tacoTooltipRef}>
                 It&rsquo;s TACO TUUUUESDAY!!!
               </AbdsTooltip>
             </h2>
@@ -116,7 +120,7 @@ const App = () => {
 
               <AbdsRadio name="fruit" value="apple">
                 Apple
-                <i id="apple" className="fas fa-apple-whole"></i>
+                <i className="fas fa-apple-whole" id="apple"></i>
                 <AbdsTooltip for="apple">Pick me! Pick ME!!</AbdsTooltip>
               </AbdsRadio>
               <AbdsRadio name="fruit" value="banana">
@@ -137,13 +141,13 @@ const App = () => {
 
               <AbdsCheckbox name="veggie" value="carrot">
                 Carrot
-                <i id="carrot" className="fas fa-carrot"></i>
+                <i className="fas fa-carrot" id="carrot"></i>
                 <abds-tooltip for="carrot">Ehhhh, what&rsquo;s up Doc?</abds-tooltip>
               </AbdsCheckbox>
               <AbdsCheckbox name="veggie" value="broccoli">
                 Broccoli
               </AbdsCheckbox>
-              <AbdsCheckbox name="veggie" value="potato" required tooltip="potatoe">
+              <AbdsCheckbox name="veggie" required tooltip="potatoe" value="potato">
                 Potato
               </AbdsCheckbox>
             </section>
@@ -151,12 +155,12 @@ const App = () => {
             <section className="flex gap-x-4 items-center" id="dietary-restrictions">
               <h3>Dietary Restrictions:</h3>
 
-              <AbdsSwitch name="diet" value="vegan" tooltip="no meat">
+              <AbdsSwitch name="diet" tooltip="no meat" value="vegan">
                 Vegan
               </AbdsSwitch>
               <AbdsSwitch name="diet" value="carnivore">
                 Carnivore
-                <i id="dragon" className="fas fa-dragon"></i>
+                <i className="fas fa-dragon" id="dragon"></i>
                 <abds-tooltip for="dragon">ROOAARR!!!</abds-tooltip>
               </AbdsSwitch>
               <AbdsSwitch name="diet" value="glutenfree">
@@ -194,7 +198,13 @@ const App = () => {
             Important information
           </AbdsButton>
 
-          <AbdsModal header-text="Not important information" icon="information-circle" id="modal-1" palette="danger">
+          <AbdsModal
+            header-text="Not important information"
+            icon="information-circle"
+            id="modal-1"
+            palette="danger"
+            ref={modalRef}
+          >
             <p slot="modal-header">Modal header which shouldn&rsquo;t show</p>
 
             <div slot="modal-body">
@@ -224,7 +234,7 @@ const App = () => {
             </div>
 
             <div slot="modal-footer">
-              <AbdsButton className="mr-1" appearance="outline" palette="neutral">
+              <AbdsButton appearance="outline" className="mr-1" palette="neutral">
                 This button will not close modal
               </AbdsButton>
               <AbdsButton>This one either</AbdsButton>
