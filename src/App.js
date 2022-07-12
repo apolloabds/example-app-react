@@ -3,8 +3,11 @@ import {
   AbdsBadge,
   AbdsButton,
   AbdsCheckbox,
+  AbdsInput,
   AbdsModal,
   AbdsRadio,
+  AbdsSelect,
+  AbdsSelectOption,
   AbdsSwitch,
   AbdsTooltip,
 } from '@abds/react-bindings';
@@ -15,11 +18,81 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [itemCount, setItemCount] = useState(0);
 
+  const abdsSelectRef = useRef(null);
   const modalRef = useRef(null);
   const shoppingListRef = useRef(null);
   const tacoTooltipRef = useRef(null);
 
+  const initializeStatesSelect = () => {
+    const fetchAuthorizationToken = async () =>
+      await fetch('https://www.universal-tutorial.com/api/getaccesstoken', {
+        headers: new Headers({
+          'api-token': 'aJC50l2lisn1j0sD7nfyZsu0npkhf6JW2YA3FcQ1244YPtONQwiiIeU0H-6kdd6kbgY',
+          'user-email': 'abc.121009.210823@gmail.com',
+        }),
+        method: 'GET',
+        redirect: 'follow',
+      })
+        .then((response) => response.json())
+        .then(({ auth_token }) => auth_token)
+        .catch((error) => console.error(error));
+
+    const fetchStates = async () => {
+      const authorizationToken = await fetchAuthorizationToken();
+
+      await fetch('https://www.universal-tutorial.com/api/states/United States', {
+        headers: new Headers({
+          Accept: 'application/json',
+          Authorization: `Bearer ${authorizationToken}`,
+          'api-token': 'aJC50l2lisn1j0sD7nfyZsu0npkhf6JW2YA3FcQ1244YPtONQwiiIeU0H-6kdd6kbgY',
+          'user-email': 'abc.121009.210823@gmail.com',
+        }),
+        method: 'GET',
+        redirect: 'follow',
+      })
+        .then((response) => response.json())
+        .then((states) => {
+          const hiddenSelect = abdsSelectRef.current?.querySelector('select');
+          const hiddenSelectOptions = hiddenSelect?.querySelectorAll('option');
+          const hiddenSelectPlaceholder = Array.from(hiddenSelectOptions).filter((option) =>
+            option.classList.contains('placeholder')
+          )[0];
+
+          if (abdsSelectRef.current) abdsSelectRef.current.innerHTML = '';
+
+          abdsSelectRef.current?.appendChild(hiddenSelect);
+
+          if (hiddenSelect) hiddenSelect.innerHTML = '';
+
+          hiddenSelect?.appendChild(hiddenSelectPlaceholder);
+
+          states.forEach(({ state_name: state }) => {
+            const option = document.createElement('option');
+            const abdsOption = document.createElement('abds-select-option');
+
+            abdsOption.innerText = state;
+            abdsOption.setAttribute('value', state);
+
+            option.innerText = state;
+            option.setAttribute('value', state);
+
+            abdsSelectRef.current?.appendChild(abdsOption);
+            hiddenSelect?.appendChild(option);
+          });
+        })
+        .catch((error) => console.error('error', error));
+    };
+
+    fetchStates();
+  };
+
   const initializeTacoTuesday = () => {
+    /**
+     * If a boolean attribute is set in the markup and that markup
+     * then updates on rerender, the attribute will be true on each
+     * rerender. One way to workaround this is to use useEffect to
+     * set the attribute only one time on the initial render.
+     */
     if (!tacoTooltipRef.current.open) tacoTooltipRef.current.open = true;
   };
 
@@ -31,12 +104,8 @@ const App = () => {
     });
   };
 
-  /**
-   * If a boolean attribute is set in the markup and that markup
-   * then updates on rerender, the attribute will be true on each
-   * rerender. One way to workaround this is to use useEffect to
-   * set the attribute only one time on the initial render.
-   */
+  useEffect(initializeStatesSelect, []);
+
   useEffect(initializeTacoTuesday, []);
 
   useEffect(toggleTheme, [darkMode]);
@@ -174,6 +243,52 @@ const App = () => {
             <AbdsButton className="block" type="submit">
               Submit
             </AbdsButton>
+          </form>
+        </section>
+
+        <section id="contact-us">
+          <form className="flex flex-col gap-y-4">
+            <h2>Contact Us</h2>
+
+            <div className="flex gap-x-4">
+              <AbdsInput
+                maxlength="10"
+                minlength="3"
+                name="first-name"
+                pattern="[A-Z|a-z]+"
+                pattern-message="Must contain letters only"
+              >
+                First Name
+              </AbdsInput>
+              <AbdsInput name="last-name" pattern="[A-Z|a-z]+" required>
+                Last Name
+              </AbdsInput>
+            </div>
+
+            <div className="flex gap-x-4">
+              <AbdsInput name="street" pattern="\w+(\s\w+){2,}" required>
+                Street
+              </AbdsInput>
+              <AbdsInput name="city" pattern="[A-Z|a-z|\s]+" required>
+                City
+              </AbdsInput>
+              <AbdsSelect
+                id="states"
+                label="State"
+                name="state"
+                placeholder="Select a state"
+                ref={abdsSelectRef}
+                required
+              >
+                {/**  Default options if API results are unavailable. */}
+                <AbdsSelectOption value="cali">California</AbdsSelectOption>
+                <AbdsSelectOption value="denver">Denver</AbdsSelectOption>
+                <AbdsSelectOption value="new york">New York</AbdsSelectOption>
+                <AbdsSelectOption value="tx">Texas</AbdsSelectOption>
+              </AbdsSelect>
+            </div>
+
+            <AbdsButton type="submit">Submit</AbdsButton>
           </form>
         </section>
 
