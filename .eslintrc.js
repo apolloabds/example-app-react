@@ -14,9 +14,7 @@ module.exports = {
   },
   plugins: ['prettier', 'react'],
   rules: {
-    'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
-    'lines-between-class-members': ['error', 'always'],
     'no-comma-dangle': 'off',
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'no-unneeded-ternary': 'error',
@@ -31,15 +29,7 @@ module.exports = {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     ],
-    'react/no-unknown-property': 'off',
     'react/react-in-jsx-scope': 'off',
-    'react/self-closing-comp': [
-      'error',
-      {
-        component: true,
-        html: false,
-      },
-    ],
     curly: 'off',
     strictPropertyInitialization: 0,
   },
