@@ -4,5 +4,6 @@
   },
   "hardReloadOnChange": false,
   "infiniteLoopProtection": true,
+  "template": "node",
   "view": "browser"
 }
