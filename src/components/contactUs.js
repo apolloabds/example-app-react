@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AbdsButton, AbdsInput, AbdsSelect, AbdsSelectOption } from '@abds/react-bindings';
 
 export const ContactUs = () => {
@@ -8,8 +8,6 @@ export const ContactUs = () => {
     { state_name: 'new york' },
     { state_name: 'texas' },
   ]);
-
-  const abdsSelectRef = useRef(null);
 
   const initializeStatesSelect = () => {
     const fetchAuthorizationToken = async () =>
@@ -82,13 +80,12 @@ export const ContactUs = () => {
             label="State"
             name="state"
             placeholder="-- Select a state --"
-            ref={abdsSelectRef}
             required
           >
             {states.map(({ state_name }) => (
-              <option key={state_name} value={state_name.toLowerCase()}>
+              <AbdsSelectOption key={state_name} value={state_name.toLowerCase()}>
                 {`${state_name.slice(0, 1).toUpperCase()}${state_name.slice(1)}`}
-              </option>
+              </AbdsSelectOption>
             ))}
           </AbdsSelect>
         </div>

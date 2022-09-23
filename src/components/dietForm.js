@@ -88,7 +88,7 @@ export const DietForm = () => {
           </AbdsSwitch>
         </section>
 
-        <AbdsButton className="block" type="submit">
+        <AbdsButton className="block">
           Submit
         </AbdsButton>
       </form>
