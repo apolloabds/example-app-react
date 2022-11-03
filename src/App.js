@@ -1,6 +1,6 @@
 import './App.css';
 import logo from './logo.svg';
-import { ContactUs, DietForm, Modal, ShoppingList, TogglePlayground } from './components';
+import { ChangePassword, ColorSearch, ContactUs, DietForm, Modal, ShoppingList, TogglePlayground } from './components';
 
 const App = () => (
   <>
@@ -17,6 +17,8 @@ const App = () => (
       <ShoppingList />
       <DietForm />
       <ContactUs />
+      <ChangePassword />
+      <ColorSearch />
       <TogglePlayground />
       <Modal />
     </div>
