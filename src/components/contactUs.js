@@ -63,31 +63,28 @@ export const ContactUs = () => {
           >
             First Name
           </AbdsInput>
-          <AbdsInput name="last-name" pattern="[A-Z|a-z]+" required>
+          <AbdsInput name="last-name" pattern="[A-Z|a-z]+">
             Last Name
           </AbdsInput>
         </div>
 
         <div className="flex gap-x-4">
-          <AbdsInput name="street" pattern="\w+(\s\w+){2,}" required>
+          <AbdsInput name="street" pattern="\w+(\s\w+){2,}">
             Street
           </AbdsInput>
-          <AbdsInput name="city" pattern="[A-Z|a-z|\s]+" required>
+          <AbdsInput name="city" pattern="[A-Z|a-z|\s]+">
             City
           </AbdsInput>
-          <AbdsSelect
-            id="states"
-            label="State"
-            name="state"
-            placeholder="-- Select a state --"
-            required
-          >
+          <AbdsSelect id="states" label="State" name="state" placeholder="-- Select a state --" required>
             {states.map(({ state_name }) => (
               <AbdsSelectOption key={state_name} value={state_name.toLowerCase()}>
                 {`${state_name.slice(0, 1).toUpperCase()}${state_name.slice(1)}`}
               </AbdsSelectOption>
             ))}
           </AbdsSelect>
+          <AbdsInput max="7" min="0" name="trips" type="number" value="1">
+            Weekly Grocery Trips
+          </AbdsInput>
         </div>
 
         <AbdsButton type="submit">Submit</AbdsButton>

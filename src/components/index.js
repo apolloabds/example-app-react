@@ -1,3 +1,5 @@
+export * from './changePassword';
+export * from './colorSearch';
 export * from './contactUs';
 export * from './dietForm';
 export * from './modal';
